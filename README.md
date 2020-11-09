@@ -33,5 +33,29 @@ And in fact, the library Apache Commons Lang contains such functions in the clas
 
 Finally, remove the old method `join(int[])`.
 
+
 ## Step 7
+We will make one more improvement to the ATM in the next step. If a user has entered an illegal value (e.g., 42), the ATM gives an error message, which is fine. But this happens after the ATM tried to generate an int array, although it could be known in advance that we will never find a combination of banknotes that sums up to 42 (because 42 is not divisible by 5, which is our smallest value). So it's a waste of resources to call the function `withdraw(int)` in the first place.
+
+To fix this situation, we will make use of something new that has been introduced with Java 8 (you will therefore need to fix the Java version in your `pom.xml`): Lambda expressions.
+
+Please add a function inheriting from [`java.util.function.IntPredicate`](https://docs.oracle.com/javase/8/docs/api/java/util/function/IntPredicate.html) to the `ATM` class, and include a call to it as a first action in the `withdraw(int)` method, so that we immediately throw an exception if the amount is not withdrawable.
+
+If you need to read up on lambda functions in Java, [this](https://docs.oracle.com/javase/tutorial/java/javaOO/lambdaexpressions.html) is a good start.
+
+### Snippets
+
+Since this is only the reason to force you to edit the `pom.xml` file, I'm giving you a few uncommented snippets to help you get started:
+
+```java
+IntPredicate check = i -> i % 5 == 0;
+```
+
+```java
+if (!check(amount)) {
+  // TODO
+}
+```
+
+## Step 8
 Commit your changes and push them to the server.
