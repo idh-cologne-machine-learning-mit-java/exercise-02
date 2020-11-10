@@ -1,9 +1,14 @@
 package de.ukoeln.idh.teaching.jml;
 
 import java.util.Scanner;
+import java.util.function.IntPredicate;
 
-public class ATM {
+import org.apache.commons.lang3.StringUtils;
 
+
+public class ATM implements IntPredicate {
+
+	IntPredicate check = i -> i % 5 == 0;
 	/**
 	 * The bills available in the currency system (in this case: Euros)
 	 */
@@ -43,12 +48,20 @@ public class ATM {
 				if (userChoice.equalsIgnoreCase("exit")) {
 					break;
 				} else if (userChoice.matches("^\\d+$")) {
-					try {
-						int[] bills = withdraw(Integer.valueOf(userChoice));
-						System.out.println(join(bills));
-					} catch (RuntimeException e) {
-						System.err.println("Incorrect value");
-					}
+					
+					int amount = Integer.parseInt(userChoice);
+					
+					if (check.test(amount)) {
+						try {
+							int[] bills = withdraw(Integer.valueOf(userChoice));
+							//System.out.println(join(bills));
+							System.out.println(StringUtils.join(bills, ','));
+						} catch (RuntimeException e) {
+							System.err.println("Incorrect value");
+						}	
+					}else {
+						System.err.println("Nicht durch 5 teilbar");
+					}	
 				} else {
 					System.err.println("Incorrect value");
 				}
@@ -64,21 +77,28 @@ public class ATM {
 	 * @param n The integer array
 	 * @return A string
 	 */
-	public String join(int[] n) {
-		if (n.length == 0)
-			return "";
-
-		StringBuffer b = new StringBuffer();
-		b.append(n[0]);
-		for (int i = 1; i < n.length; i++) {
-			b.append(',').append(n[i]);
-		}
-		return b.toString();
-	}
+//	public String join(int[] n) {
+//		if (n.length == 0)
+//			return "";
+//
+//		StringBuffer b = new StringBuffer();
+//		b.append(n[0]);
+//		for (int i = 1; i < n.length; i++) {
+//			b.append(',').append(n[i]);
+//		}
+//		return b.toString();
+//	}
 
 	public static void main(String[] args) {
 		// create a new instance and launch it
 		new ATM().run();
 	}
 
+	@Override
+	public boolean test(int value) {
+		
+		return false;
+	}
+
+	
 }
