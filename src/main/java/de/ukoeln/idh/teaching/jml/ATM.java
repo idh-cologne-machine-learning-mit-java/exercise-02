@@ -1,8 +1,13 @@
 package de.ukoeln.idh.teaching.jml;
 
 import java.util.Scanner;
+import java.util.function.IntPredicate;
+import org.apache.commons.lang3.StringUtils;
+
 
 public class ATM {
+
+	IntPredicate check = i -> i % 5 == 0;
 
 	/**
 	 * The bills available in the currency system (in this case: Euros)
@@ -17,19 +22,20 @@ public class ATM {
 	 *         descending order)
 	 */
 	public int[] withdraw(int amount) {
-		int[] numberOfBills = new int[bills.length];
-		for (int b = 0; b < bills.length; b++) {
-			int currentBill = bills[b];
-			numberOfBills[b] = amount / currentBill;
-			amount = amount - (numberOfBills[b] * currentBill);
-		}
-		if (amount == 0) {
-			return numberOfBills;
-		} else {
+		if (!check.test(amount)) {
 			throw new RuntimeException("Cannot withdraw");
+		} else {
+			int[] numberOfBills = new int[bills.length];
+			for (int b = 0; b < bills.length; b++) {
+				int currentBill = bills[b];
+				numberOfBills[b] = amount / currentBill;
+				amount = amount - (numberOfBills[b] * currentBill);
+		    }
+			return numberOfBills;
 		}
 
 	}
+
 
 	/**
 	 * Main user loop. Allows users to enter an integer number or "exit" to leave
@@ -45,7 +51,7 @@ public class ATM {
 				} else if (userChoice.matches("^\\d+$")) {
 					try {
 						int[] bills = withdraw(Integer.valueOf(userChoice));
-						System.out.println(join(bills));
+						System.out.println(StringUtils.join(bills, ','));
 					} catch (RuntimeException e) {
 						System.err.println("Incorrect value");
 					}
@@ -64,6 +70,7 @@ public class ATM {
 	 * @param n The integer array
 	 * @return A string
 	 */
+	/*
 	public String join(int[] n) {
 		if (n.length == 0)
 			return "";
@@ -75,6 +82,7 @@ public class ATM {
 		}
 		return b.toString();
 	}
+	*/
 
 	public static void main(String[] args) {
 		// create a new instance and launch it
