@@ -1,13 +1,17 @@
 package de.ukoeln.idh.teaching.jml;
 
 import java.util.Scanner;
+import java.util.function.IntPredicate;
+import org.apache.commons.lang3.StringUtils;
 
-public class ATM {
+public class ATM implements IntPredicate {
 
 	/**
 	 * The bills available in the currency system (in this case: Euros)
 	 */
 	int[] bills = new int[] { 500, 200, 100, 50, 20, 10, 5 };
+	
+	IntPredicate check = i -> i % 5 == 0;
 
 	/**
 	 * Withdrawing logic.
@@ -43,12 +47,22 @@ public class ATM {
 				if (userChoice.equalsIgnoreCase("exit")) {
 					break;
 				} else if (userChoice.matches("^\\d+$")) {
-					try {
-						int[] bills = withdraw(Integer.valueOf(userChoice));
-						System.out.println(join(bills));
-					} catch (RuntimeException e) {
-						System.err.println("Incorrect value");
+					
+					
+					int amount = Integer.parseInt(userChoice);
+					
+					if (check.test(amount)) {
+						try {
+							int[] bills = withdraw(Integer.valueOf(userChoice));
+							//System.out.println(join(bills));
+							System.out.println(StringUtils.join(bills, ','));
+						} catch (RuntimeException e) {
+							System.err.println("Incorrect value");
+						}	
+					}else {
+						System.err.println("Your input is not divisable by 5");
 					}
+					
 				} else {
 					System.err.println("Incorrect value");
 				}
@@ -79,6 +93,12 @@ public class ATM {
 	public static void main(String[] args) {
 		// create a new instance and launch it
 		new ATM().run();
+	}
+
+	@Override
+	public boolean test(int value) {
+		// TODO Auto-generated method stub
+		return false;
 	}
 
 }
