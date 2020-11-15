@@ -1,6 +1,9 @@
 package de.ukoeln.idh.teaching.jml;
 
 import java.util.Scanner;
+import java.util.function.IntPredicate;
+
+import org.apache.commons.lang3.StringUtils;
 
 public class ATM {
 
@@ -8,6 +11,8 @@ public class ATM {
 	 * The bills available in the currency system (in this case: Euros)
 	 */
 	int[] bills = new int[] { 500, 200, 100, 50, 20, 10, 5 };
+	
+	private IntPredicate i = (x) -> (x % 5) == 0;
 
 	/**
 	 * Withdrawing logic.
@@ -16,8 +21,10 @@ public class ATM {
 	 * @return An array of integers, showing how many of which bill to return (in
 	 *         descending order)
 	 */
-	public int[] withdraw(int amount) {
-		int[] numberOfBills = new int[bills.length];
+	public Integer[] withdraw(int amount) {
+		if (!i.test(amount))
+			throw new RuntimeException("Cannot withdraw (lamda)");
+		Integer[] numberOfBills = new Integer[bills.length];
 		for (int b = 0; b < bills.length; b++) {
 			int currentBill = bills[b];
 			numberOfBills[b] = amount / currentBill;
@@ -37,6 +44,7 @@ public class ATM {
 	 */
 	public void run() {
 		String userChoice;
+		
 		try (Scanner in = new Scanner(System.in)) {
 			do {
 				userChoice = in.next();
@@ -44,8 +52,8 @@ public class ATM {
 					break;
 				} else if (userChoice.matches("^\\d+$")) {
 					try {
-						int[] bills = withdraw(Integer.valueOf(userChoice));
-						System.out.println(join(bills));
+						Integer[] bills = withdraw(Integer.valueOf(userChoice));
+						System.out.println(StringUtils.join(bills, ',').toString());
 					} catch (RuntimeException e) {
 						System.err.println("Incorrect value");
 					}
@@ -57,28 +65,11 @@ public class ATM {
 		}
 	}
 
-	/**
-	 * Helper method to generate a string representation from an integer array.
-	 * Values are separated by comma
-	 * 
-	 * @param n The integer array
-	 * @return A string
-	 */
-	public String join(int[] n) {
-		if (n.length == 0)
-			return "";
-
-		StringBuffer b = new StringBuffer();
-		b.append(n[0]);
-		for (int i = 1; i < n.length; i++) {
-			b.append(',').append(n[i]);
-		}
-		return b.toString();
-	}
 
 	public static void main(String[] args) {
 		// create a new instance and launch it
 		new ATM().run();
 	}
+
 
 }
