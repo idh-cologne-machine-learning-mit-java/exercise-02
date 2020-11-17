@@ -1,6 +1,7 @@
 package de.ukoeln.idh.teaching.jml;
 
 import java.util.Scanner;
+import java.util.function.IntPredicate;
 
 public class ATM {
 
@@ -8,6 +9,8 @@ public class ATM {
 	 * The bills available in the currency system (in this case: Euros)
 	 */
 	int[] bills = new int[] { 500, 200, 100, 50, 20, 10, 5 };
+
+  IntPredicate check = i -> i % 5 == 0;
 
 	/**
 	 * Withdrawing logic.
@@ -31,6 +34,8 @@ public class ATM {
 
 	}
 
+
+
 	/**
 	 * Main user loop. Allows users to enter an integer number or "exit" to leave
 	 * the loop.
@@ -44,8 +49,12 @@ public class ATM {
 					break;
 				} else if (userChoice.matches("^\\d+$")) {
 					try {
-						int[] bills = withdraw(Integer.valueOf(userChoice));
-						System.out.println(join(bills));
+            if (! check.test(Integer.valueOf(userChoice))) {
+						  int[] bills = withdraw(Integer.valueOf(userChoice));
+						  System.out.println(join(bills));
+            } else {
+              throw new RuntimeException();
+            }
 					} catch (RuntimeException e) {
 						System.err.println("Incorrect value");
 					}
