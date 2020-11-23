@@ -2,6 +2,7 @@ package de.ukoeln.idh.teaching.jml;
 
 import java.util.Scanner;
 import java.util.function.IntPredicate;
+import org.apache.commons.lang3.StringUtils;
 
 public class ATM {
 
@@ -9,8 +10,6 @@ public class ATM {
 	 * The bills available in the currency system (in this case: Euros)
 	 */
 	int[] bills = new int[] { 500, 200, 100, 50, 20, 10, 5 };
-
-  IntPredicate check = i -> i % 5 == 0;
 
 	/**
 	 * Withdrawing logic.
@@ -33,8 +32,9 @@ public class ATM {
 		}
 
 	}
-
-
+	
+	IntPredicate check = i -> i % 5 == 0;
+	
 
 	/**
 	 * Main user loop. Allows users to enter an integer number or "exit" to leave
@@ -49,12 +49,13 @@ public class ATM {
 					break;
 				} else if (userChoice.matches("^\\d+$")) {
 					try {
-            if (! check.test(Integer.valueOf(userChoice))) {
-						  int[] bills = withdraw(Integer.valueOf(userChoice));
-						  System.out.println(join(bills));
-            } else {
-              throw new RuntimeException();
-            }
+						if(check.test(Integer.valueOf(userChoice))) {
+							int[] bills = withdraw(Integer.valueOf(userChoice));
+							System.out.println(StringUtils.join(bills, ',').toString());
+						}
+						else {
+							throw new RuntimeException();
+						}
 					} catch (RuntimeException e) {
 						System.err.println("Incorrect value");
 					}
@@ -64,25 +65,6 @@ public class ATM {
 				System.out.println();
 			} while (in.hasNext());
 		}
-	}
-
-	/**
-	 * Helper method to generate a string representation from an integer array.
-	 * Values are separated by comma
-	 * 
-	 * @param n The integer array
-	 * @return A string
-	 */
-	public String join(int[] n) {
-		if (n.length == 0)
-			return "";
-
-		StringBuffer b = new StringBuffer();
-		b.append(n[0]);
-		for (int i = 1; i < n.length; i++) {
-			b.append(',').append(n[i]);
-		}
-		return b.toString();
 	}
 
 	public static void main(String[] args) {
